@@ -20,5 +20,10 @@ class WishlistRelationEntityRepository extends EntityRepository
                 'type' => 'varchar',
             ],
         ],
+        'indexes' => [
+            'item_type' => [
+                'type' => 'key',
+            ],
+        ],
     ];
 }
