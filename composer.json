@@ -1,0 +1,21 @@
+{
+  "name": "neTpyceB/TMCms-module-wishlist",
+  "type": "library",
+  "description": "Module Wishlist (Favorites) for TMCms",
+  "keywords": ["module", "wishlist", "favorites", "TMCms"],
+  "homepage": "http://devp.eu/",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Vadims Petrusevs",
+      "email": "info@devp.eu",
+      "homepage": "http://devp.eu/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "TMCms\\Modules\\Wishlist\\": "src"
+    }
+  }
+}
