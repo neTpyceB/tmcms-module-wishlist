@@ -76,6 +76,6 @@ class ModuleWishlist implements IModule
 		$wishes->setWhereItemType(Converter::classWithNamespaceToUnqualifiedShort($item));
 		$wishes->setWhereClientId($client_id);
 
-		return $wishes->getPairs(['item_id']);
+		return $wishes->getPairs('item_id');
 	}
 }
