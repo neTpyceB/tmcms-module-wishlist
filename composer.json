@@ -2,7 +2,12 @@
   "name": "devp-eu/tmcms-module-wishlist",
   "type": "library",
   "description": "Module Wishlist (Favorites) for TMCms",
-  "keywords": ["module", "wishlist", "favorites", "TMCms"],
+  "keywords": [
+    "module",
+    "wishlist",
+    "favorites",
+    "TMCms"
+  ],
   "homepage": "http://devp.eu/",
   "license": "proprietary",
   "authors": [
@@ -13,6 +18,10 @@
       "role": "Developer"
     }
   ],
+  "require": {
+    "devp-eu/tmcms-core": "dev-master",
+    "devp-eu/tmcms-panel": "dev-master"
+  },
   "autoload": {
     "psr-4": {
       "TMCms\\Modules\\Wishlist\\": "src"
