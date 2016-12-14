@@ -15,10 +15,6 @@ class ModuleWishlist implements IModule
 {
 	use singletonInstanceTrait;
 
-	public static $tables = array(
-		'wishlist' => 'm_wishlist'
-	);
-
 	/**
      * @param Entity $item
 	 * @param int $client_id e.g. who favors $client_id
@@ -56,7 +52,7 @@ class ModuleWishlist implements IModule
     /**
      * @param Entity $item
      * @param int $client_id
-     * @return bool
+     * @return Entity
      */
 	public static function getWish(Entity $item, $client_id) {
 		return WishlistRelationEntityRepository::findOneEntityByCriteria([
