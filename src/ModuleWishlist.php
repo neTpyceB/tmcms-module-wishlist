@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TMCms\Modules\Wishlist;
 
@@ -9,69 +10,80 @@ use TMCms\Orm\Entity;
 use TMCms\Strings\Converter;
 use TMCms\Traits\singletonInstanceTrait;
 
-defined('INC') or exit;
+\defined('INC') or exit;
 
+/**
+ * Class ModuleWishlist
+ * @package TMCms\Modules\Wishlist
+ */
 class ModuleWishlist implements IModule
 {
-	use singletonInstanceTrait;
-
-	/**
-     * @param Entity $item
-	 * @param int $client_id e.g. who favors $client_id
-	 * @return int $id of created entry
-	 */
-	public static function addWish(Entity $item, $client_id) {
-		$wish = self::getWish($item, $client_id);
-
-		if (!$wish) {
-			$wish = new WishlistRelationEntity();
-			$wish->loadDataFromArray([
-				'item_type' => Converter::classWithNamespaceToUnqualifiedShort($item),
-				'item_id' => $item->getId(),
-				'client_id' => $client_id,
-			]);
-			$wish->save();
-		}
-
-		return $wish->getId();
-	}
-
-	/**
-     * @param Entity $item
-	 * @param int $client_id
-	 */
-	public static function deleteWish(Entity $item, $client_id) {
-		$wishes = new WishlistRelationEntityRepository();
-		$wishes->setWhereItemType(Converter::classWithNamespaceToUnqualifiedShort($item));
-		$wishes->setWhereItemId($item->getId());
-		$wishes->setWhereClientId($client_id);
-
-		$wishes->deleteObjectCollection();
-	}
+    use singletonInstanceTrait;
 
     /**
      * @param Entity $item
-     * @param int $client_id
-     * @return Entity
+     * @param Entity $client
+     *
+     * @return WishlistRelationEntity
      */
-	public static function getWish(Entity $item, $client_id) {
-		return WishlistRelationEntityRepository::findOneEntityByCriteria([
-				'item_type' => Converter::classWithNamespaceToUnqualifiedShort($item),
-				'item_id' => $item->getId(),
-				'client_id' => $client_id,
-		]);
-	}
+    public static function addWish(Entity $item, Entity $client): WishlistRelationEntity
+    {
+        $wish = self::getExistingWish($item, $client);
+
+        if (!$wish) {
+            $wish = new WishlistRelationEntity();
+            $wish->loadDataFromArray([
+                'item_type' => $item->getUnqualifiedShortClassName(),
+                'item_id' => $item->getId(),
+                'client_id' => $client->getId(),
+            ]);
+            $wish->save();
+        }
+
+        return $wish;
+    }
+
+    /**
+     * @param Entity $item
+     * @param Entity $client
+     *
+     * @return Entity|bool
+     */
+    public static function getExistingWish(Entity $item, Entity $client) {
+        return WishlistRelationEntityRepository::findOneEntityByCriteria([
+            'item_type' => $item->getUnqualifiedShortClassName(),
+            'item_id' => $item->getId(),
+            'client_id' => $client->getId(),
+        ]);
+    }
 
     /**
      * @param Entity $item
      * @param int $client_id
      * @return array
      */
-	public static function getWishList(Entity $item, $client_id) {
-		$wishes = new WishlistRelationEntityRepository();
-		$wishes->setWhereItemType(Converter::classWithNamespaceToUnqualifiedShort($item));
-		$wishes->setWhereClientId($client_id);
+    public static function getWishList(Entity $item, $client_id): array
+    {
+        $wishes = new WishlistRelationEntityRepository();
+        $wishes->setWhereItemType(Converter::classWithNamespaceToUnqualifiedShort($item));
+        $wishes->setWhereClientId($client_id);
 
-		return $wishes->getPairs('item_id');
-	}
+        return $wishes->getPairs('item_id');
+    }
+
+    /**
+     * @param Entity $item
+     * @param Entity $client
+     */
+    public static function deleteAllEntriesForItem(Entity $item, Entity $client = null)
+    {
+        $rating_collection = new WishlistRelationEntityRepository;
+        $rating_collection->setWhereItemId($item->getId());
+        $rating_collection->setWhereItemType($item->getUnqualifiedShortClassName());
+        if ($client) {
+            $rating_collection->setWhereClientId($client->getId());
+        }
+
+        $rating_collection->deleteObjectCollection();
+    }
 }
